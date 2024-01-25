@@ -1,0 +1,31 @@
+# Logs
+logs
+*.log
+
+# Dependency directories
+node_modules/
+cypress/videos
+cypress/screenshots
+js/*.js
+
+# Optional npm cache directory
+.npm
+
+# Output of 'npm pack'
+*.tgz
+
+# Compiled binary addons
+build/Release
+build
+
+# mac data
+.DS_Store
+
+# Coverage directory used by tools like istanbul
+coverage
+
+# Runtime data
+pids
+*.pid
+*.seed
+
