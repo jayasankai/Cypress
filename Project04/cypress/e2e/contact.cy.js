@@ -1,9 +1,13 @@
 /// <reference types="Cypress" />
 
 describe('Contact Form', () => {
-    it('should submit the form by Button Click', () => {
-        cy.visit('http://localhost:5173/about');
 
+    // Execte this before each test runs
+    beforeEach(() => {
+        cy.visit('/about');
+    });
+
+    it('should submit the form by Button Click', () => {
         cy.get('[data-cy="contact-input-message"]').type('Message');
         cy.get('[data-cy="contact-input-name"]').type('Jay Sanka');
         cy.get('[data-cy="contact-input-email"]').type('jayasanka@email.com');
@@ -33,8 +37,6 @@ describe('Contact Form', () => {
     });
 
     it('should be able to submit via press Enter', () => {
-        cy.visit('http://localhost:5173/about');
-
         cy.get('[data-cy="contact-input-message"]').type('Message');
         cy.get('[data-cy="contact-input-name"]').type('Jay Sanka');
         // Define an special key press
@@ -47,8 +49,6 @@ describe('Contact Form', () => {
     });
 
     it('should validate the form inputs', () => {
-        cy.visit('http://localhost:5173/about');
-
         cy.get('[data-cy="contact-btn-submit"]').as('submitBtn');
         cy.get('@submitBtn').click();
         cy.get('@submitBtn').then(el => {

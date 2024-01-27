@@ -1,9 +1,13 @@
 /// <reference types="Cypress" />
 
 describe('Page Navigation', () => {
-  it('should navigate between pages', () => {
-    cy.visit('http://localhost:5173/');
 
+  // Execte this before each test runs
+  beforeEach(() => {
+    cy.visit('/');
+  });
+
+  it('should navigate between pages', () => {
     cy.get('[data-cy="header-about-link"]').click();
     cy.location('pathname').should('eq', '/about'); // This is for About page
 
