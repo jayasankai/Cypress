@@ -91,4 +91,13 @@ describe('Contact Form', () => {
             .should('have.attr', 'class')
             .and('match', /invalid/);
     });
+
+    // Customer commands and Custom Queries
+    it ('should be able to click submit button', () => {
+
+        cy.getByDataCyId('contact-input-message').type('Message');
+        cy.getByDataCyId('contact-input-name').type('Jay Sanka');
+
+        cy.clickSubmitBtn();
+    });
 });
