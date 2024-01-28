@@ -3,22 +3,23 @@
 describe('share location', () => {
 
   beforeEach(() => {
+
+    // Access fixture file
+    cy.fixture('user-location.json').as('userLocation');
+
     cy.visit('/').then( win => {
 
-      // Stub to fake 'getCurrentPosition' method call
-      cy.stub(win.navigator.geolocation, 'getCurrentPosition').as('getUserPosition')
-        .callsFake((cb) => {
-          // Call callback function with time out    
-          setTimeout(() => {
-            cb({
-              coords : {
-                latitude : 12.4,
-                longitude : 43.5
-              }
-            });
-          }, 100);
-
-        });
+      // User Fixtures
+      cy.get('@userLocation').then(fakePossitions => {
+        // Stub to fake 'getCurrentPosition' method call
+        cy.stub(win.navigator.geolocation, 'getCurrentPosition').as('getUserPosition')
+          .callsFake((cb) => {
+            // Call callback function with time out    
+            setTimeout(() => {
+              cb(fakePossitions);
+            }, 100);
+          });
+      });
 
       // Returns a promiss when 'writeText' method calls
       cy.stub(win.navigator.clipboard, 'writeText').as('saveToClipboard').resolves();
@@ -44,7 +45,11 @@ describe('share location', () => {
     cy.get('[data-cy="share-loc-btn"]').click();
 
     cy.get('@saveToClipboard').should('have.been.called');
-    cy.get('@saveToClipboard').should('have.been.calledWithMatch', new RegExp(`${12.4}.*${43.5}.*${encodeURI('Test Name')}`));
+    cy.get('@userLocation').then(fakePossitions => {
+      const {latitude, longitude} = fakePossitions.coords;
+      cy.get('@saveToClipboard').should('have.been.calledWithMatch', new RegExp(`${latitude}.*${longitude}.*${encodeURI('Test Name')}`));
+    });
+
   });
 
 });
