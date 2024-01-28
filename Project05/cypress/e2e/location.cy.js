@@ -3,12 +3,13 @@
 describe('share location', () => {
 
   beforeEach(() => {
+    // Initialize the clock
+    cy.clock();
 
     // Access fixture file
     cy.fixture('user-location.json').as('userLocation');
 
     cy.visit('/').then( win => {
-
       // User Fixtures
       cy.get('@userLocation').then(fakePossitions => {
         // Stub to fake 'getCurrentPosition' method call
@@ -23,7 +24,11 @@ describe('share location', () => {
 
       // Returns a promiss when 'writeText' method calls
       cy.stub(win.navigator.clipboard, 'writeText').as('saveToClipboard').resolves();
-        
+
+      // Adding 'spy' to tests
+      cy.spy(win.localStorage, 'setItem').as('storeLocation');
+      cy.spy(win.localStorage, 'getItem').as('getStoredLocation');
+
     });
   });
 
@@ -48,8 +53,20 @@ describe('share location', () => {
     cy.get('@userLocation').then(fakePossitions => {
       const {latitude, longitude} = fakePossitions.coords;
       cy.get('@saveToClipboard').should('have.been.calledWithMatch', new RegExp(`${latitude}.*${longitude}.*${encodeURI('Test Name')}`));
+
+      cy.get('@storeLocation').should('have.been.calledWithMatch', /Test Name/, new RegExp(`${latitude}.*${longitude}.*${encodeURI('Test Name')}`));
     });
 
+    cy.get('@storeLocation').should('have.been.called');
+    cy.get('[data-cy="share-loc-btn"]').click();
+    cy.get('@getStoredLocation').should('have.been.called');
+
+    // Manipulating the timer
+    cy.get('[data-cy="info-message"]').should('be.visible');
+    cy.get('[data-cy="info-message"]').should('have.class', 'visible');
+
+    cy.tick(2000);
+    cy.get('[data-cy="info-message"]').should('not.be.visible');
   });
 
 });
