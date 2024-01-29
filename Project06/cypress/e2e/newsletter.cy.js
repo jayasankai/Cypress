@@ -31,4 +31,18 @@ describe('Newsletter', () => {
         cy.wait('@subscribe');
         cy.contains('Email exists already!');
     });
+
+    // Backend testing.
+    it('should successfully create a new contact', () => {
+        cy.request({
+            method : 'POST',
+            url : '/newsletter',
+            body : {
+                email : 'test@test.com'
+            },
+            form : true
+        }).then((res) => {
+            expect(res.status).to.eq(201);
+        });
+    });
 });
